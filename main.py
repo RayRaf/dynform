@@ -61,22 +61,17 @@ class Glavn:
                     if col_index > 0:
                         for row_index in range(self._foo.nrows):
                             if row_index > 0:
-                                no = (self._foo.cell_value(rowx=row_index, colx=col_index) == '')
-                                yes = (self._foo.cell_value(rowx=row_index, colx=col_index) != '')
-                                if selected_params[row_index]:
-                                    if row_index == len(selected_params):
-                                        print('Match found')
-                                else:
-                                    print('Прервано')
-                                    break
-
-
-
-
-
-
-
-
+                                # no = (self._foo.cell_value(rowx=row_index, colx=col_index) == '')
+                                # yes = (self._foo.cell_value(rowx=row_index, colx=col_index) != '')
+                                if selected_params[row_index-1]:
+                                    if (selected_params[row_index-1] == 'Да' and self._foo.cell_value(rowx=row_index, colx=col_index) != '') or (selected_params[row_index-1] == 'Нет' and self._foo.cell_value(rowx=row_index, colx=col_index) == ''):
+                                        if row_index == len(selected_params)-1:
+                                            print('Match found')
+                                            status_label = ttk.Label(text="Обнаружен подходящий блок")
+                                            status_label.grid(row=len(selected_params) + 1, column=0)
+                                    else:
+                                        print('Прервано')
+                                        break
             else:
                 status_label = ttk.Label(text="Не все поля заполнены")
                 status_label.grid(row=len(selected_params) + 1, column=0)
