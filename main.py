@@ -1,11 +1,14 @@
 import xlrd
 from tkinter import *
 from tkinter import ttk
+import os
 
 
 class Glavn:
-    def __init__(self, foo=None):
+    def __init__(self, foo=None, template_type=None, selected_template=None):
         self._foo = foo
+        self._template_type = template_type
+        self._selected_template = selected_template
 
     def Run (self):
 
@@ -28,12 +31,23 @@ class Glavn:
         for rx in range(sh.nrows):
             type_names.append(sh.cell_value(rowx=rx, colx=0))
 
-        # ШАГ 1. Выбор тиа схемы
+        def single_click(event):
+            file_path = self._template_type + "\\" + str(int(self._selected_template))
+            if os.path.exists(file_path + '.dwg'):
+                os.startfile(file_path + '.dwg', 'open')
+            if os.path.exists(file_path + '.txt'):
+                os.startfile(file_path + '.txt', 'open')
+
+
+
+
+        # ШАГ 1. Выбор типа схемы
 
         def type_selected(event):
             selected_type = type_names.index(typ_select_combobox.get())
             book2 = xlrd.open_workbook("DB{0}.xls".format(str(selected_type + 2)))
             self._foo = book2.sheet_by_index(0)
+            self._template_type = str(selected_type + 2)
             for rx1 in range(self._foo.nrows):
                 if rx1 > 0:
                     comboboxes.append(ttk.Combobox(values=['Да', 'Нет']))
@@ -52,29 +66,44 @@ class Glavn:
         # ШАГ 2. Проверка параметров
         def param_selected(event, ):
             selected_params.clear()
+            match_found = False
             for combobox in comboboxes:
                 selected_params.append(combobox.get())
             if selected_params.count('') == 0:
                 status_label = ttk.Label(text="Все поля заполнены")
                 status_label.grid(row=len(selected_params) + 1, column=0)
                 for col_index in range(self._foo.ncols):
-                    if col_index > 0:
+                    if col_index > 0 and not match_found:
                         for row_index in range(self._foo.nrows):
                             if row_index > 0:
                                 # no = (self._foo.cell_value(rowx=row_index, colx=col_index) == '')
                                 # yes = (self._foo.cell_value(rowx=row_index, colx=col_index) != '')
                                 if selected_params[row_index-1]:
-                                    if (selected_params[row_index-1] == 'Да' and self._foo.cell_value(rowx=row_index, colx=col_index) != '') or (selected_params[row_index-1] == 'Нет' and self._foo.cell_value(rowx=row_index, colx=col_index) == ''):
-                                        if row_index == len(selected_params)-1:
+                                    cell = self._foo.cell_value(rowx=row_index, colx=col_index)
+                                    param = selected_params[row_index-1]
+                                    if (param == 'Да' and cell != '') or (param == 'Нет' and cell == ''):
+                                        if row_index == len(selected_params):
                                             print('Match found')
                                             status_label = ttk.Label(text="Обнаружен подходящий блок")
                                             status_label.grid(row=len(selected_params) + 1, column=0)
+                                            btn = ttk.Button(text="Открыть")
+                                            btn.bind("<ButtonPress-1>", single_click)
+                                            btn.grid(row=len(selected_params) + 1, column=1)
+                                            self._selected_template = self._foo.cell_value(rowx=0, colx=col_index)
+                                            match_found = True
                                     else:
                                         print('Прервано')
                                         break
             else:
                 status_label = ttk.Label(text="Не все поля заполнены")
                 status_label.grid(row=len(selected_params) + 1, column=0)
+
+            if not match_found:
+                status_label = ttk.Label(text="Подходящий шаблон не найден")
+                status_label.grid(row=len(selected_params) + 1, column=0)
+                btn = ttk.Button(text="Нельзя открыть")
+                btn.grid(row=len(selected_params) + 1, column=1)
+                btn.state(['disabled'])
 
         root.mainloop()
 
