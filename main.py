@@ -10,9 +10,7 @@ class Glavn:
         self._template_type = template_type
         self._selected_template = selected_template
 
-    def Run (self):
-
-
+    def run(self):
 
         root = Tk()
         root.title("RAY")
@@ -20,16 +18,10 @@ class Glavn:
         type_names = []
         comboboxes = []
         selected_params = []
-        selected_type = None
 
         book = xlrd.open_workbook("DB1.xls")
-        print("The number of worksheets is {0}".format(book.nsheets))
-        print("Worksheet name(s): {0}".format(book.sheet_names()))
         sh = book.sheet_by_index(0)
-        print("Лист {0} имеет  {1} строк и {2} столбцов".format(sh.name, sh.nrows, sh.ncols))
-        print("Cell A1 is {0}".format(sh.cell_value(rowx=0, colx=0)))
-        for rx in range(sh.nrows):
-            type_names.append(sh.cell_value(rowx=rx, colx=0))
+        [type_names.append(sh.cell_value(rowx=rx, colx=0)) for rx in range(sh.nrows)]
 
         def single_click(event):
             file_path = self._template_type + "\\" + str(int(self._selected_template))
@@ -38,11 +30,7 @@ class Glavn:
             if os.path.exists(file_path + '.txt'):
                 os.startfile(file_path + '.txt', 'open')
 
-
-
-
         # ШАГ 1. Выбор типа схемы
-
         def type_selected(event):
             selected_type = type_names.index(typ_select_combobox.get())
             book2 = xlrd.open_workbook("DB{0}.xls".format(str(selected_type + 2)))
@@ -67,8 +55,7 @@ class Glavn:
         def param_selected(event, ):
             selected_params.clear()
             match_found = False
-            for combobox in comboboxes:
-                selected_params.append(combobox.get())
+            [selected_params.append(combobox.get()) for combobox in comboboxes]
             if selected_params.count('') == 0:
                 status_label = ttk.Label(text="Все поля заполнены")
                 status_label.grid(row=len(selected_params) + 1, column=0)
@@ -76,14 +63,11 @@ class Glavn:
                     if col_index > 0 and not match_found:
                         for row_index in range(self._foo.nrows):
                             if row_index > 0:
-                                # no = (self._foo.cell_value(rowx=row_index, colx=col_index) == '')
-                                # yes = (self._foo.cell_value(rowx=row_index, colx=col_index) != '')
                                 if selected_params[row_index-1]:
                                     cell = self._foo.cell_value(rowx=row_index, colx=col_index)
                                     param = selected_params[row_index-1]
                                     if (param == 'Да' and cell != '') or (param == 'Нет' and cell == ''):
                                         if row_index == len(selected_params):
-                                            print('Match found')
                                             status_label = ttk.Label(text="Обнаружен подходящий блок")
                                             status_label.grid(row=len(selected_params) + 1, column=0)
                                             btn = ttk.Button(text="Открыть")
@@ -92,7 +76,6 @@ class Glavn:
                                             self._selected_template = self._foo.cell_value(rowx=0, colx=col_index)
                                             match_found = True
                                     else:
-                                        print('Прервано')
                                         break
             else:
                 status_label = ttk.Label(text="Не все поля заполнены")
@@ -109,7 +92,7 @@ class Glavn:
 
 
 a = Glavn()
-a.Run()
+a.run()
 
 
 
