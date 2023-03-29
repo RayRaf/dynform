@@ -15,6 +15,14 @@ class Glavn:
         root = Tk()
         root.title("RAY")
 
+        w = root.winfo_screenwidth()
+        h = root.winfo_screenheight()
+        w = w // 2  # середина экрана
+        h = h // 2
+        w = w - 200  # смещение от середины
+        h = h - 200
+        root.geometry('400x400+{}+{}'.format(w, h))
+
         type_names = []
         comboboxes = []
         selected_params = []
@@ -84,7 +92,7 @@ class Glavn:
             if not match_found:
                 status_label = ttk.Label(text="Подходящий шаблон не найден")
                 status_label.grid(row=len(selected_params) + 1, column=0)
-                btn = ttk.Button(text="Нельзя открыть")
+                btn = ttk.Button(text="Открыть")
                 btn.grid(row=len(selected_params) + 1, column=1)
                 btn.state(['disabled'])
 
