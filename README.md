@@ -14,7 +14,10 @@
 3. Перед запуском пройтись по коду: везде, где выводятся красные подчеркивания щелкнуть и установить предлагаемые пакеты;
 4. Запустить, нажав кнопку Run или Debug.
 
-
+Как собрать исполняемый exe файл:
+1. Убедиться, что установлен [Python](https://www.python.org/). Например командй проверки версии: python -V (Прописная V). Если не установлен, то установить;
+2. Убедиться, что установлен [Pyinstaller](https://pyinstaller.org/en/stable/index.html). Например командой проверки версии: pyinstaller -v (Строчная v). Если не установлен, то установить командой pip install -U pyinstaller;
+3. Выполнить сборку exe файла командой pyinstaller --onefile --noconsole main.py. --noconsole - опция отключения отображения консоли, --onefile - опция сборки в один единый exe файл.
 
 
 Использована [эта](https://xlrd.readthedocs.io/en/latest/ "Go to Web Site XLRD") читалка файлов Excel. Поддерживается только формат .xls. Есть [Другие](https://pythonist.ru/kak-chitat-excel-fajl-xlsx-v-python/ "На сайт") читалки.
