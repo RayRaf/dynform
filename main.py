@@ -5,12 +5,11 @@ import os
 
 
 class Glavn:
-    def __init__(self, foo=None, template_type=None, selected_template=None):
-        self._foo = foo
-        self._template_type = template_type
-        self._selected_template = selected_template
 
-    def run(self):
+    _tt = None
+    _selected_template = None
+    _foo = None
+    def __init__(self):
 
         root = Tk()
         root.title("RAY")
@@ -19,9 +18,9 @@ class Glavn:
         h = root.winfo_screenheight()
         w = w // 2  # середина экрана
         h = h // 2
-        w = w - 200  # смещение от середины
-        h = h - 200
-        root.geometry('400x400+{}+{}'.format(w, h))
+        w = w - 250  # смещение от середины
+        h = h - 250
+        root.geometry('500x500+{}+{}'.format(w, h))
 
         type_names = []
         comboboxes = []
@@ -32,7 +31,7 @@ class Glavn:
         [type_names.append(sh.cell_value(rowx=rx, colx=0)) for rx in range(sh.nrows)]
 
         def single_click(event):
-            file_path = self._template_type + "\\" + str(int(self._selected_template))
+            file_path = self._tt + "\\" + str(int(self._selected_template))
             if os.path.exists(file_path + '.dwg'):
                 os.startfile(file_path + '.dwg', 'open')
             if os.path.exists(file_path + '.txt'):
@@ -43,7 +42,7 @@ class Glavn:
             selected_type = type_names.index(typ_select_combobox.get())
             book2 = xlrd.open_workbook("DB{0}.xls".format(str(selected_type + 2)))
             self._foo = book2.sheet_by_index(0)
-            self._template_type = str(selected_type + 2)
+            self._tt = str(selected_type + 2)
             for rx1 in range(self._foo.nrows):
                 if rx1 > 0:
                     comboboxes.append(ttk.Combobox(values=['Да', 'Нет']))
@@ -100,19 +99,3 @@ class Glavn:
 
 
 a = Glavn()
-a.run()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
