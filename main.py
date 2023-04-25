@@ -11,7 +11,7 @@ class Glavn:
 
     def __init__(self):
 
-        def single_click(event):
+        def open_file_click(event):
             file_path = self._tt + "\\" + str(int(self._selected_template))
             if os.path.exists(file_path + '.dwg'):
                 os.startfile(file_path + '.dwg', 'open')
@@ -48,7 +48,7 @@ class Glavn:
                     status_label = ttk.Label(text="Обнаружен подходящий блок")
                     status_label.grid(row=len(selected_params) + 1, column=0)
                     btn = ttk.Button(text="Открыть")
-                    btn.bind("<ButtonPress-1>", single_click)
+                    btn.bind("<ButtonPress-1>", open_file_click)
                     btn.grid(row=len(selected_params) + 1, column=1)
                     self._selected_template = self._foo.cell_value(rowx=0, colx=col_index)
                     break
