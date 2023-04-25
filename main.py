@@ -27,6 +27,7 @@ class Glavn:
             for rx1 in range(self._foo.nrows):
                 if rx1 > 0:
                     comboboxes.append(ttk.Combobox(values=['Да', 'Нет']))
+                    comboboxes[rx1 - 1].set('Нет')
                     comboboxes[rx1 - 1].grid(row=rx1 - 1, column=1)
                     comboboxes[rx1 - 1].bind("<<ComboboxSelected>>", param_selected)
                     label1 = ttk.Label(text=self._foo.cell_value(rowx=rx1, colx=0))
