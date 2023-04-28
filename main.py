@@ -11,24 +11,44 @@ class Glavn:
     _params_visibility = None
     _comboboxes = []
     _selected_params_static = None
-
-
+    _selected_params_static_prev = []
 
     def __init__(self):
 
-
-
+        def compatible_option(option_index, selected_options, selected_options_prev, db):
+            for i in range(len(selected_options_prev)):
+                if selected_options_prev[i] != selected_options[i] and i == option_index:
+                    self._selected_params_static_prev = selected_options
+                    return TRUE
+            for col_index in range(db.ncols):
+                if col_index > 0:
+                    cv = db.cell_value(rowx=option_index, colx=col_index)
+                    if cv != '':
+                        for row_index in range(db.nrows):
+                            if row_index > 0:
+                                so = selected_options[row_index - 1]
+                                if so == 'Да':
+                                    cv2 = db.cell_value(rowx=row_index, colx=col_index)
+                                    if cv2 != '':
+                                        pass
+                                    else:
+                                        break
+                                    if row_index == range(db.nrows):
+                                        return TRUE
 
         def refresh_options():
             self._comboboxes.clear()
             for rx1 in range(self._foo.nrows):
                 if rx1 > 0:
+
                     self._comboboxes.append(ttk.Combobox(values=['Да', 'Нет']))
-                    self._comboboxes[rx1 - 1].grid(row=rx1 - 1, column=1)
-                    self._comboboxes[rx1 - 1].set(self._selected_params_static[rx1 - 1])
-                    self._comboboxes[rx1 - 1].bind("<<ComboboxSelected>>", param_selected)
-                    label1 = ttk.Label(text=self._foo.cell_value(rowx=rx1, colx=0))
-                    label1.grid(row=rx1 - 1, column=0)
+                    #if rx1 != 3:
+                    if compatible_option(rx1, self._selected_params_static, self._selected_params_static_prev, self._foo):
+                        self._comboboxes[rx1 - 1].grid(row=rx1 - 1, column=1)
+                        self._comboboxes[rx1 - 1].set(self._selected_params_static[rx1 - 1])
+                        self._comboboxes[rx1 - 1].bind("<<ComboboxSelected>>", param_selected)
+                        label1 = ttk.Label(text=self._foo.cell_value(rowx=rx1, colx=0))
+                        label1.grid(row=rx1 - 1, column=0)
 
 
 
@@ -60,6 +80,9 @@ class Glavn:
             selected_params = []
             [selected_params.append(combobox.get()) for combobox in self._comboboxes]
             self._selected_params_static = selected_params
+            if self._selected_params_static_prev == []:
+                for s in range(len(selected_params)):
+                    self._selected_params_static_prev.append('Нет')
             for col_index in range(self._foo.ncols):
                 template_params = []
                 for row_index in range(self._foo.nrows):
