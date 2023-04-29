@@ -16,39 +16,88 @@ class Glavn:
     def __init__(self):
 
         def compatible_option(option_index, selected_options, selected_options_prev, db):
-            for i in range(len(selected_options_prev)):
-                if selected_options_prev[i] != selected_options[i] and i == option_index:
+            for i in range(len(selected_options_prev)): #Последний измененный пункт не должен становиться неактивным
+                if selected_options_prev[i] != selected_options[i] and i == option_index - 1:
                     self._selected_params_static_prev = selected_options
                     return TRUE
+
+
+            y_count_in_so = 0
+            for option in selected_options:
+                if option == 'Да':
+                    y_count_in_so += 1
+
+
+
             for col_index in range(db.ncols):
                 if col_index > 0:
-                    cv = db.cell_value(rowx=option_index, colx=col_index)
-                    if cv != '':
-                        for row_index in range(db.nrows):
-                            if row_index > 0:
-                                so = selected_options[row_index - 1]
-                                if so == 'Да':
-                                    cv2 = db.cell_value(rowx=row_index, colx=col_index)
-                                    if cv2 != '':
-                                        pass
-                                    else:
-                                        break
-                                    if row_index == range(db.nrows):
-                                        return TRUE
+                    y_counter = 0
+                    for so_index in range(len(selected_options)):
+                        so = selected_options[so_index]
+                        cv = db.cell_value(rowx=so_index+1, colx=col_index)
+                        if so == 'Да' and cv != '':
+                            y_counter += 1
+                    if y_counter == y_count_in_so:
+                        cv = db.cell_value(rowx=option_index + 1, colx=col_index)
+                        if cv != '':
+                            return TRUE
+
+
+
+
+
+
+
+
+
+                            # so = selected_options[row_index - 1]
+                            # cv = db.cell_value(rowx=row_index, colx=col_index)
+                            #
+                            #
+                            # if so == 'Да'
+
+
+
+
+
+
+
+            # for col_index in range(db.ncols):
+            #     if col_index > 0:
+            #         cv = db.cell_value(rowx=option_index, colx=col_index)
+            #         if cv != '':
+            #             for row_index in range(db.nrows):
+            #                 if row_index > 0:
+            #                     so = selected_options[row_index - 1]
+            #                     if so == 'Да':
+            #                         cv2 = db.cell_value(rowx=row_index, colx=col_index)
+            #                         if cv2 != '':
+            #                             pass
+            #                         else:
+            #                             break
+            #                         if row_index == range(db.nrows):
+            #                             return TRUE
 
         def refresh_options():
+
+            lista = root.grid_slaves()
+            for ls in lista:
+                ls.destroy()
             self._comboboxes.clear()
             for rx1 in range(self._foo.nrows):
                 if rx1 > 0:
 
                     self._comboboxes.append(ttk.Combobox(values=['Да', 'Нет']))
                     #if rx1 != 3:
-                    if compatible_option(rx1, self._selected_params_static, self._selected_params_static_prev, self._foo):
-                        self._comboboxes[rx1 - 1].grid(row=rx1 - 1, column=1)
-                        self._comboboxes[rx1 - 1].set(self._selected_params_static[rx1 - 1])
-                        self._comboboxes[rx1 - 1].bind("<<ComboboxSelected>>", param_selected)
-                        label1 = ttk.Label(text=self._foo.cell_value(rowx=rx1, colx=0))
-                        label1.grid(row=rx1 - 1, column=0)
+
+                    self._comboboxes[rx1 - 1].grid(row=rx1 - 1, column=1)
+                    self._comboboxes[rx1 - 1].set(self._selected_params_static[rx1 - 1])
+                    self._comboboxes[rx1 - 1].bind("<<ComboboxSelected>>", param_selected)
+                    label1 = ttk.Label(text=self._foo.cell_value(rowx=rx1, colx=0))
+                    label1.grid(row=rx1 - 1, column=0)
+                    if not compatible_option(rx1 - 1, self._selected_params_static, self._selected_params_static_prev,
+                                         self._foo):
+                        self._comboboxes[rx1 - 1].state(['disabled'])
 
 
 
@@ -77,12 +126,14 @@ class Glavn:
         # ШАГ 2. Проверка параметров
 
         def param_selected(event):
+
             selected_params = []
             [selected_params.append(combobox.get()) for combobox in self._comboboxes]
             self._selected_params_static = selected_params
             if self._selected_params_static_prev == []:
                 for s in range(len(selected_params)):
                     self._selected_params_static_prev.append('Нет')
+            refresh_options()
             for col_index in range(self._foo.ncols):
                 template_params = []
                 for row_index in range(self._foo.nrows):
@@ -104,10 +155,8 @@ class Glavn:
                     btn = ttk.Button(text="Открыть")
                     btn.grid(row=len(selected_params) + 1, column=1)
                     btn.state(['disabled'])
-                    lista = root.grid_slaves()
-                    for ls in lista:
-                        ls.destroy()
-                    refresh_options()
+
+
 
 
 
