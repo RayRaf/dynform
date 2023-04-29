@@ -27,6 +27,9 @@ class Glavn:
                 if option == 'Да':
                     y_count_in_so += 1
 
+            if y_count_in_so == 0:
+                return TRUE
+
 
 
             for col_index in range(db.ncols):
