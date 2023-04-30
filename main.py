@@ -21,7 +21,6 @@ class Glavn:
                     self._selected_params_static_prev = selected_options
                     return TRUE
 
-
             y_count_in_so = 0
             for option in selected_options:
                 if option == 'Да':
@@ -29,8 +28,6 @@ class Glavn:
 
             if y_count_in_so == 0:
                 return TRUE
-
-
 
             for col_index in range(db.ncols):
                 if col_index > 0:
@@ -44,42 +41,6 @@ class Glavn:
                         cv = db.cell_value(rowx=option_index + 1, colx=col_index)
                         if cv != '':
                             return TRUE
-
-
-
-
-
-
-
-
-
-                            # so = selected_options[row_index - 1]
-                            # cv = db.cell_value(rowx=row_index, colx=col_index)
-                            #
-                            #
-                            # if so == 'Да'
-
-
-
-
-
-
-
-            # for col_index in range(db.ncols):
-            #     if col_index > 0:
-            #         cv = db.cell_value(rowx=option_index, colx=col_index)
-            #         if cv != '':
-            #             for row_index in range(db.nrows):
-            #                 if row_index > 0:
-            #                     so = selected_options[row_index - 1]
-            #                     if so == 'Да':
-            #                         cv2 = db.cell_value(rowx=row_index, colx=col_index)
-            #                         if cv2 != '':
-            #                             pass
-            #                         else:
-            #                             break
-            #                         if row_index == range(db.nrows):
-            #                             return TRUE
 
         def refresh_options():
 
@@ -145,7 +106,7 @@ class Glavn:
                 if len(template_params) > 0:
                     template_params.pop(0)
                 if template_params == selected_params:
-                    status_label = ttk.Label(text="Обнаружен подходящий блок")
+                    status_label = ttk.Label(text="Обнаружен подходящий шаблон")
                     status_label.grid(row=len(selected_params) + 1, column=0)
                     btn = ttk.Button(text="Открыть")
                     btn.bind("<ButtonPress-1>", open_file_click)
