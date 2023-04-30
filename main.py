@@ -106,7 +106,7 @@ class Glavn:
                 if len(template_params) > 0:
                     template_params.pop(0)
                 if template_params == selected_params:
-                    status_label = ttk.Label(text="Обнаружен подходящий шаблонь")
+                    status_label = ttk.Label(text="Обнаружен подходящий шаблон")
                     status_label.grid(row=len(selected_params) + 1, column=0)
                     btn = ttk.Button(text="Открыть")
                     btn.bind("<ButtonPress-1>", open_file_click)
