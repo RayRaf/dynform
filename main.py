@@ -17,7 +17,7 @@ class Glavn:
 
         def compatible_option(option_index, selected_options, selected_options_prev, db):
             for i in range(len(selected_options_prev)): #Последний измененный пункт не должен становиться неактивным
-                if selected_options_prev[i] != selected_options[i] and i == option_index - 1:
+                if (selected_options_prev[i] != selected_options[i]) and (i == option_index):
                     self._selected_params_static_prev = selected_options
                     return TRUE
 
