@@ -1,8 +1,10 @@
+import subprocess
+
 import xlrd
 from tkinter import *
 from tkinter import ttk
 import os
-
+import sys
 
 class Glavn:
     _tt = None
@@ -50,10 +52,7 @@ class Glavn:
             self._comboboxes.clear()
             for rx1 in range(self._foo.nrows):
                 if rx1 > 0:
-
                     self._comboboxes.append(ttk.Combobox(values=['Да', 'Нет']))
-                    #if rx1 != 3:
-
                     self._comboboxes[rx1 - 1].grid(row=rx1 - 1, column=1)
                     self._comboboxes[rx1 - 1].set(self._selected_params_static[rx1 - 1])
                     self._comboboxes[rx1 - 1].bind("<<ComboboxSelected>>", param_selected)
@@ -63,14 +62,23 @@ class Glavn:
                                          self._foo):
                         self._comboboxes[rx1 - 1].state(['disabled'])
 
-
-
         def open_file_click(event):
-            file_path = self._tt + "\\" + str(int(self._selected_template))
+            file_path = os.path.join(self._tt, str(int(self._selected_template)))
+
+            print(sys.platform)
             if os.path.exists(file_path + '.dwg'):
-                os.startfile(file_path + '.dwg', 'open')
+                if sys.platform == 'linux':
+                    subprocess.call(["xdg-open", file_path + '.dwg'])
+                else:
+                    os.startfile(file_path + '.dwg')
+
             if os.path.exists(file_path + '.txt'):
-                os.startfile(file_path + '.txt', 'open')
+                if sys.platform == 'linux':
+                    subprocess.call(["xdg-open", file_path + '.txt'])
+                else:
+                    os.startfile(file_path + '.txt')
+
+
 
         # ШАГ 1. Выбор типа схемы
         def type_selected(event):
