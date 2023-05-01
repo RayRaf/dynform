@@ -1,5 +1,4 @@
 import subprocess
-
 import xlrd
 from tkinter import *
 from tkinter import ttk
@@ -18,6 +17,14 @@ class Glavn:
     def __init__(self):
 
         def compatible_option(option_index, selected_options, selected_options_prev, db):
+            """
+            Выполняет проверку текущего параметра на предмет совместимости с опциями имеющихся шаблонов
+            :param option_index: Индекс опции, на которой сейчас находится цикл перебора
+            :param selected_options: Список опций, который сейчас выбраны
+            :param selected_options_prev: Список опций, которые были выбраны на один выбор раньше (по отличию от selected_options определяет изменившуюся опцию)
+            :param db: Содержимое файла Excel
+            :return: True, False
+            """
             for i in range(len(selected_options_prev)): #Последний измененный пункт не должен становиться неактивным
                 if (selected_options_prev[i] != selected_options[i]) and (i == option_index):
                     self._selected_params_static_prev = selected_options
@@ -45,7 +52,10 @@ class Glavn:
                             return TRUE
 
         def refresh_options():
-
+            """
+            Выполняет обновление всех опций
+            :return: Ничего
+            """
             lista = root.grid_slaves()
             for ls in lista:
                 ls.destroy()
@@ -63,6 +73,11 @@ class Glavn:
                         self._comboboxes[rx1 - 1].state(['disabled'])
 
         def open_file_click(event):
+            """
+            Обрабатывает событие нажатия на кнопку открытия выбранного шаблона
+            :param event: Событие нажатия на кнопку открытия выбранного шаблона
+            :return: Ничего
+            """
             file_path = os.path.join(self._tt, str(int(self._selected_template)))
 
             print(sys.platform)
@@ -82,6 +97,11 @@ class Glavn:
 
         # ШАГ 1. Выбор типа схемы
         def type_selected(event):
+            """
+            Выполняет обработку события выбора типа на первом экране
+            :param event: Событие выбора типа на первом экране
+            :return: Ничего
+            """
             selected_type = type_names.index(typ_select_combobox.get())
             book2 = xlrd.open_workbook("DB{0}.xls".format(str(selected_type + 2)))
             self._foo = book2.sheet_by_index(0)
@@ -98,7 +118,11 @@ class Glavn:
         # ШАГ 2. Проверка параметров
 
         def param_selected(event):
-
+            """
+            Обрабатывает событие изменения значения опции "Да", "Нет"
+            :param event: Событие изменения опции "Да", "Нет"
+            :return: Ничего
+            """
             selected_params = []
             [selected_params.append(combobox.get()) for combobox in self._comboboxes]
             self._selected_params_static = selected_params
