@@ -13,6 +13,8 @@ class Glavn:
     _comboboxes = []
     _selected_params_static = None
     _selected_params_static_prev = []
+    _type_names = []
+    _typ_select_combobox = None
 
     def __init__(self):
 
@@ -72,6 +74,13 @@ class Glavn:
                                          self._foo):
                         self._comboboxes[rx1 - 1].state(['disabled'])
 
+            btn = ttk.Button(text="Назад")
+            btn.bind("<ButtonPress-1>", back_button_click)
+            btn.grid(row=self._foo.nrows + 1, column=1)
+
+        def back_button_click(event):
+            init_gui()
+
         def open_file_click(event):
             """
             Обрабатывает событие нажатия на кнопку открытия выбранного шаблона
@@ -102,7 +111,7 @@ class Glavn:
             :param event: Событие выбора типа на первом экране
             :return: Ничего
             """
-            selected_type = type_names.index(typ_select_combobox.get())
+            selected_type = self._type_names.index(self._typ_select_combobox.get())
             book2 = xlrd.open_workbook("DB{0}.xls".format(str(selected_type + 2)))
             self._foo = book2.sheet_by_index(0)
             self._tt = str(selected_type + 2)
@@ -169,19 +178,38 @@ class Glavn:
         h = h - 250
         root.geometry('500x500+{}+{}'.format(w, h))
 
-        type_names = []
 
 
-        book = xlrd.open_workbook("DB1.xls")
-        sh = book.sheet_by_index(0)
-        [type_names.append(sh.cell_value(rowx=rx, colx=0)) for rx in range(sh.nrows)]
-        label = ttk.Label(text="Тип схемы:")
-        label.grid(row=0, column=0)
-        type_names.pop(0)
-        typ_select_combobox = ttk.Combobox(values=type_names)
-        typ_select_combobox.grid(row=0, column=1)
-        typ_select_combobox.bind("<<ComboboxSelected>>", type_selected)
+        def init_gui():
 
+            self._tt = None
+            self._selected_template = None
+            self._foo = None
+            self._params_visibility = None
+            self._comboboxes = []
+            self._selected_params_static = None
+            self._selected_params_static_prev = []
+            self._type_names = []
+            self._typ_select_combobox = None
+
+
+
+
+
+            lista = root.grid_slaves()
+            for ls in lista:
+                ls.destroy()
+            book = xlrd.open_workbook("DB1.xls")
+            sh = book.sheet_by_index(0)
+            [self._type_names.append(sh.cell_value(rowx=rx, colx=0)) for rx in range(sh.nrows)]
+            label = ttk.Label(text="Тип схемы:")
+            label.grid(row=0, column=0)
+            self._type_names.pop(0)
+            self._typ_select_combobox = ttk.Combobox(values=self._type_names)
+            self._typ_select_combobox.grid(row=0, column=1)
+            self._typ_select_combobox.bind("<<ComboboxSelected>>", type_selected)
+
+        init_gui()
         root.mainloop()
 
 
